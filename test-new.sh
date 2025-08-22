@@ -190,6 +190,7 @@ configure_hf_keep_alive() {
     echo
     echo -e "${YELLOW}是否设置 Hugging Face API 自动保活? (y/n)${NC}"
     read -p "> " SETUP_KEEP_ALIVE
+
     if [ "$SETUP_KEEP_ALIVE" = "y" ] || [ "$SETUP_KEEP_ALIVE" = "Y" ]; then
         echo -e "${YELLOW}请输入您的 Hugging Face 访问令牌 (Token):${NC}"
         echo -e "${BLUE}（令牌用于API认证，输入时将不可见。请前往 https://huggingface.co/settings/tokens 获取）${NC}"
@@ -215,7 +216,7 @@ configure_hf_keep_alive() {
     fi
 }
 
-if [ "$MODE_CHOICE" = "1" ] || [ -z "$UUID_INPUT" ]; then
+if [ "$MODE_CHOICE" = "1" ] || [ -z "$MODE_CHOICE" ]; then
     echo -e "${BLUE}=== 极速模式 ===${NC}"
     echo
     
@@ -228,11 +229,14 @@ if [ "$MODE_CHOICE" = "1" ] || [ -z "$UUID_INPUT" ]; then
     
     sed -i "s/UUID = os.environ.get('UUID', '[^']*')/UUID = os.environ.get('UUID', '$UUID_INPUT')/" app.py
     echo -e "${GREEN}UUID 已设置为: $UUID_INPUT${NC}"
+    # 不修改代码，直接设置环境变量
+    export CFIP="104.16.132.229"
+    sed -i "s/CFIP = os.environ.get('CFIP', '[^']*')/CFIP = os.environ.get('CFIP', '$CFIP_INPUT')/" app.py
+    echo -e "${GREEN}优选IP已设置为: $CFIP_INPUT${NC}"
+#    sed -i "s/CFIP = os.environ.get('CFIP', '[^']*')/CFIP = os.environ.get('CFIP', '')/" app.py
+#    echo -e "${GREEN}优选IP已自动设置为:$CFIP ${NC}"
     
-    sed -i "s/CFIP = os.environ.get('CFIP', '[^']*')/CFIP = os.environ.get('CFIP', 'google.com')/" app.py
-    echo -e "${GREEN}优选IP已自动设置为: google.com${NC}"
-    
-    configure_hf_keep_alive
+#    configure_hf_keep_alive
     
     echo -e "${GREEN}YouTube分流已自动配置${NC}"
     echo
